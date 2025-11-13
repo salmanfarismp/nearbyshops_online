@@ -1,0 +1,146 @@
+# Cursor Rules for Nearby Shops Online
+
+## Project Overview
+- Next.js 16 with App Router
+- TypeScript (strict mode enabled)
+- React 19 with Server Components
+- Tailwind CSS 4
+- shadcn/ui components (New York style)
+- Lucide React icons
+
+## Code Style & Conventions
+
+### TypeScript
+- Always use TypeScript strict mode
+- Prefer explicit types over `any`
+- Use `interface` for object shapes, `type` for unions/intersections
+- Export types/interfaces when they're used across files
+- Use `Readonly<>` for props when appropriate
+
+### React & Next.js
+- Use React Server Components by default (RSC enabled)
+- Use `"use client"` directive only when necessary (interactivity, hooks, browser APIs)
+- Prefer async Server Components for data fetching
+- Use Next.js `Image` component for images
+- Use Next.js `Link` component for internal navigation
+- Follow Next.js App Router conventions:
+  - `page.tsx` for routes
+  - `layout.tsx` for layouts
+  - `loading.tsx` for loading states
+  - `error.tsx` for error boundaries
+  - `not-found.tsx` for 404 pages
+
+### File & Folder Structure
+- Use kebab-case for file names (e.g., `user-profile.tsx`)
+- Use PascalCase for component names
+- Place components in `components/` directory
+- Place reusable UI components in `components/ui/`
+- Place utilities in `lib/` directory
+- Place custom hooks in `hooks/` directory
+- Use path aliases: `@/components`, `@/lib`, `@/hooks`, `@/ui`
+
+### Component Patterns
+- Use functional components with TypeScript
+- Export components as default when they're the main export
+- Use named exports for utilities and hooks
+- Keep components focused and single-responsibility
+- Extract reusable logic into custom hooks
+- Use composition over configuration
+
+### Styling with Tailwind CSS
+- Use Tailwind utility classes for styling
+- Prefer Tailwind classes over inline styles
+- Use `cn()` utility from `@/lib/utils` for conditional classes
+- Follow mobile-first responsive design
+- Use CSS variables for theming (dark mode support)
+- Keep class names organized and readable
+
+### shadcn/ui Components
+- Use shadcn/ui components from `@/components/ui`
+- Follow New York style guidelines
+- Customize components by copying to `components/ui/` and modifying
+- Use `class-variance-authority` for variant-based styling
+
+### Code Quality
+- Write self-documenting code with clear variable/function names
+- Add comments only when necessary to explain "why", not "what"
+- Keep functions small and focused
+- Avoid deep nesting (max 3-4 levels)
+- Use early returns to reduce nesting
+- Handle errors appropriately with try-catch or error boundaries
+
+### Performance
+- Optimize images with Next.js Image component
+- Use dynamic imports for code splitting when appropriate
+- Minimize client-side JavaScript
+- Leverage Server Components for better performance
+- Use React.memo() sparingly, only when profiling shows benefits
+
+### Security
+- NEVER expose credentials, API keys, or sensitive information
+- Use environment variables for configuration (`.env.local`)
+- Validate and sanitize user inputs
+- Use Next.js built-in CSRF protection
+- Follow Next.js security best practices
+
+### Git & Commits
+- Keep commit messages short and descriptive
+- Use present tense ("Add feature" not "Added feature")
+- Focus on what changed, not why (unless critical)
+
+### Imports
+- Group imports: external packages, then internal modules
+- Use absolute imports with `@/` prefix
+- Sort imports logically (React, Next.js, third-party, local)
+
+### Error Handling
+- Use error boundaries for component error handling
+- Provide meaningful error messages
+- Log errors appropriately (avoid logging sensitive data)
+- Handle loading and error states in UI
+
+### Accessibility
+- Use semantic HTML elements
+- Include proper ARIA labels when needed
+- Ensure keyboard navigation works
+- Maintain proper color contrast
+- Test with screen readers when possible
+
+## Common Patterns
+
+### Server Component Example
+```typescript
+export default async function Page() {
+  const data = await fetchData();
+  return <div>{/* render data */}</div>;
+}
+```
+
+### Client Component Example
+```typescript
+"use client";
+
+import { useState } from "react";
+
+export default function InteractiveComponent() {
+  const [state, setState] = useState();
+  // component logic
+}
+```
+
+### API Route Example
+```typescript
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  return NextResponse.json({ data: "example" });
+}
+```
+
+## When Making Changes
+- Always check for existing patterns before creating new ones
+- Maintain consistency with existing codebase
+- Update related files if making structural changes
+- Test changes in development before committing
+- Consider backward compatibility
+
