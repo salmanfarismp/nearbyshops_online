@@ -18,7 +18,8 @@ export const metadata: Metadata = {
     default: "Nearbyshops - Shop Local, Support Communities",
     template: "%s | Nearbyshops",
   },
-  description: "Local stores are the heart of our communities. Nearbyshops empowers small businesses to list their products online and compete on a level playing field. Discover, support, and shop local to keep your community strong.",
+  description:
+    "Local stores are the heart of our communities. Nearbyshops empowers small businesses to list their products online and compete on a level playing field. Discover, support, and shop local to keep your community strong.",
   keywords: [
     "local shopping",
     "shop local",
@@ -45,7 +46,8 @@ export const metadata: Metadata = {
     url: "https://nearbyshops.online",
     siteName: "Nearbyshops",
     title: "Nearbyshops - Shop Local, Support Communities",
-    description: "Local stores are the heart of our communities. Nearbyshops empowers small businesses to list their products online and compete on a level playing field. Discover, support, and shop local to keep your community strong.",
+    description:
+      "Local stores are the heart of our communities. Nearbyshops empowers small businesses to list their products online and compete on a level playing field. Discover, support, and shop local to keep your community strong.",
     images: [
       {
         url: "/logo.png",
@@ -58,7 +60,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Nearbyshops - Shop Local, Support Communities",
-    description: "Local stores are the heart of our communities. Nearbyshops empowers small businesses to list their products online and compete on a level playing field.",
+    description:
+      "Local stores are the heart of our communities. Nearbyshops empowers small businesses to list their products online and compete on a level playing field.",
     images: ["/logo.png"],
     creator: "@nearbyshops",
   },
@@ -74,8 +77,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
     apple: "/logo.png",
   },
   verification: {

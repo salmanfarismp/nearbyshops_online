@@ -1,26 +1,36 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Store, Heart, TrendingUp, Search } from "lucide-react";
 
 const features = [
   {
     icon: Search,
     title: "Discover Local Shops",
-    description: "Find nearby stores and their products with ease. Browse through local businesses in your neighborhood and discover unique items you won't find elsewhere.",
+    description:
+      "Find nearby stores and their products with ease. Browse neighborhood shops and uncover hidden gems right around the corner.",
   },
   {
     icon: Heart,
     title: "Support Your Community",
-    description: "Every purchase you make keeps money in your neighborhood, helping local families and strengthening the local economy.",
+    description:
+      "Every purchase you make keeps money in your neighborhood, helping local families and strengthening the local economy.",
   },
   {
     icon: TrendingUp,
     title: "Level Playing Field",
-    description: "Small businesses can now compete online with the same tools and visibility as big e-commerce platforms. Fair competition for everyone.",
+    description:
+      "Small businesses can now compete online with the same tools and visibility as big e-commerce platforms. Fair competition for everyone.",
   },
   {
     icon: Store,
     title: "Easy Shopping Experience",
-    description: "Browse, compare, and purchase from local stores with a simple, intuitive interface designed to make supporting local businesses effortless.",
+    description:
+      "Browse, compare, and purchase from local stores with a simple, intuitive interface designed to make supporting local businesses effortless.",
   },
 ];
 
@@ -36,7 +46,7 @@ export default function FeaturesSection() {
             Empowering local businesses and communities through technology
           </p>
         </div>
-        
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
             const Icon = feature.icon;
@@ -61,4 +71,3 @@ export default function FeaturesSection() {
     </section>
   );
 }
-
