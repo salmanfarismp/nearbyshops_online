@@ -15,7 +15,7 @@ export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
   }
 
   // If mobileApp=1, immediately redirect to mobile app
-  const isMobileApp = mobileApp === "1" || mobileApp === 1;
+  const isMobileApp = mobileApp === "1" || (Array.isArray(mobileApp) && mobileApp[0] === "1");
 
   if (isMobileApp) {
     // Use immediate client-side redirect component
