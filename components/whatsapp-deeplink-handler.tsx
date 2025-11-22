@@ -5,17 +5,19 @@ import { Button } from "@/components/ui/button";
 
 interface WhatsAppDeeplinkHandlerProps {
   data: string;
+  immediateRedirect?: boolean;
 }
 
 export default function WhatsAppDeeplinkHandler({
   data,
+  immediateRedirect = false,
 }: WhatsAppDeeplinkHandlerProps) {
   const [isRedirecting, setIsRedirecting] = useState(true);
   const [showFallback, setShowFallback] = useState(false);
 
-  const deepLink = `nearbyshops://auth/whatsapp-login?token=${encodeURIComponent(
+  const deepLink = `nearbyshops://whatsapp?data=${encodeURIComponent(
     data
-  )}`;
+  )}&mobileApp=1`;
 
   const attemptDeepLink = () => {
     setIsRedirecting(true);
@@ -24,6 +26,21 @@ export default function WhatsAppDeeplinkHandler({
   };
 
   useEffect(() => {
+    // If immediateRedirect is true, attempt deep link immediately without delay
+    if (immediateRedirect) {
+      // Use immediate synchronous redirect for mobile app links
+      window.location.href = deepLink;
+      
+      // For immediate redirects, use a shorter timeout
+      const timeout = setTimeout(() => {
+        if (!document.hidden) {
+          setShowFallback(true);
+          setIsRedirecting(false);
+        }
+      }, 1500);
+      return () => clearTimeout(timeout);
+    }
+
     // Attempt to open the deep link
     attemptDeepLink();
 
@@ -41,7 +58,7 @@ export default function WhatsAppDeeplinkHandler({
     return () => {
       clearTimeout(timeout);
     };
-  }, [data]);
+  }, [data, immediateRedirect]);
 
   // Listen for page visibility changes
   useEffect(() => {
