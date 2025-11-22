@@ -1,5 +1,21 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+For Universal Links and App Links to work, you need to set the following environment variables:
+
+- `APPLE_TEAM_ID`: Your Apple Developer Team ID (10 characters, e.g., `ABC123DEF4`)
+
+  - Find it in your Apple Developer account or Xcode signing settings
+  - Used for iOS Universal Links at `/.well-known/apple-app-site-association`
+
+- `ANDROID_SHA256_FINGERPRINTS`: Comma-separated SHA-256 certificate fingerprints
+  - Format: `fingerprint1,fingerprint2` (no spaces, no colons, no `SHA256:` prefix)
+  - Get fingerprints using: `keytool -list -v -keystore <keystore> -alias <alias>`
+  - Used for Android App Links at `/.well-known/assetlinks.json`
+
+Create a `.env.local` file in the root directory with these variables for local development.
+
 ## Getting Started
 
 First, run the development server:
