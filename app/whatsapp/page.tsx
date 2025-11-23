@@ -3,46 +3,49 @@ import Script from "next/script";
 import WhatsAppDeeplinkHandler from "@/components/whatsapp-deeplink-handler";
 
 interface WhatsAppPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined };
 }
 
 // Force dynamic rendering to ensure runtime logs
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
+export default async function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
+  // Handle both Promise and direct object cases (Next.js 15+ uses Promise)
+  const resolvedSearchParams = searchParams instanceof Promise 
+    ? await searchParams 
+    : searchParams;
+
   // DEBUG: Log all search params
-  console.log("[WhatsAppPage] All searchParams:", JSON.stringify(searchParams, null, 2));
-  console.log("[WhatsAppPage] searchParams.data:", searchParams.data);
-  console.log("[WhatsAppPage] searchParams.data type:", typeof searchParams.data);
-  console.log("[WhatsAppPage] searchParams.data isArray:", Array.isArray(searchParams.data));
-  console.log("[WhatsAppPage] searchParams.mobileApp:", searchParams.mobileApp);
-  console.log("[WhatsAppPage] searchParams.mobileApp type:", typeof searchParams.mobileApp);
+  console.log("[WhatsAppPage] All searchParams:", JSON.stringify(resolvedSearchParams, null, 2));
+  console.log("[WhatsAppPage] searchParams.data:", resolvedSearchParams.data);
+  console.log("[WhatsAppPage] searchParams.data type:", typeof resolvedSearchParams.data);
+  console.log("[WhatsAppPage] searchParams.data isArray:", Array.isArray(resolvedSearchParams.data));
+  console.log("[WhatsAppPage] searchParams.mobileApp:", resolvedSearchParams.mobileApp);
+  console.log("[WhatsAppPage] searchParams.mobileApp type:", typeof resolvedSearchParams.mobileApp);
 
   // Handle both string and array cases for data
-  const dataParam = searchParams.data;
+  const dataParam = resolvedSearchParams.data;
   const data = Array.isArray(dataParam) ? dataParam[0] : dataParam;
   
   console.log("[WhatsAppPage] Processed data:", data);
   console.log("[WhatsAppPage] Processed data type:", typeof data);
   console.log("[WhatsAppPage] Processed data length:", data ? data.length : "null/undefined");
 
-  const mobileApp = searchParams.mobileApp;
+  const mobileApp = resolvedSearchParams.mobileApp;
   console.log("[WhatsAppPage] mobileApp param:", mobileApp);
 
-  // Validate data exists - be more lenient
-  if (!data) {
-    console.error("[WhatsAppPage] ERROR: data is missing or falsy, redirecting to home");
-    console.error("[WhatsAppPage] data value:", data);
-    console.error("[WhatsAppPage] dataParam value:", dataParam);
-    redirect("/");
-  }
-
-  if (typeof data !== "string") {
-    console.error("[WhatsAppPage] ERROR: data is not a string, redirecting to home");
-    console.error("[WhatsAppPage] data type:", typeof data);
-    console.error("[WhatsAppPage] data value:", data);
-    redirect("/");
+  // If searchParams is empty, let client component handle it from URL
+  if (!data || typeof data !== "string") {
+    console.warn("[WhatsAppPage] WARNING: searchParams empty or invalid, passing to client component to read from URL");
+    return (
+      <WhatsAppDeeplinkHandler 
+        data="" 
+        immediateRedirect={true}
+        searchParams={JSON.stringify(resolvedSearchParams)}
+        readFromUrl={true}
+      />
+    );
   }
 
   console.log("[WhatsAppPage] ✓ Data validation passed");
@@ -120,7 +123,7 @@ export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
         <WhatsAppDeeplinkHandler 
           data={data} 
           immediateRedirect={true}
-          searchParams={JSON.stringify(searchParams)}
+          searchParams={JSON.stringify(resolvedSearchParams)}
         />
       </>
     );
@@ -131,7 +134,7 @@ export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
     <WhatsAppDeeplinkHandler 
       data={data} 
       immediateRedirect={false}
-      searchParams={JSON.stringify(searchParams)}
+      searchParams={JSON.stringify(resolvedSearchParams)}
     />
   );
 }

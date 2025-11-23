@@ -7,13 +7,47 @@ interface WhatsAppDeeplinkHandlerProps {
   data: string;
   immediateRedirect?: boolean;
   searchParams?: string; // JSON stringified searchParams for debugging
+  readFromUrl?: boolean; // If true, read params from URL directly
 }
 
 export default function WhatsAppDeeplinkHandler({
   data,
   immediateRedirect = false,
   searchParams,
+  readFromUrl = false,
 }: WhatsAppDeeplinkHandlerProps) {
+  // Read from URL if needed
+  const [urlParams, setUrlParams] = useState<{
+    data?: string;
+    mobileApp?: string;
+  }>({});
+
+  useEffect(() => {
+    if (readFromUrl || !data) {
+      console.log("[Browser] Reading parameters from URL");
+      const url = new URL(window.location.href);
+      const urlData = url.searchParams.get("data");
+      const urlMobileApp = url.searchParams.get("mobileApp");
+
+      console.log(
+        "[Browser] URL data param:",
+        urlData ? `${urlData.substring(0, 50)}...` : "null",
+        "length:",
+        urlData?.length
+      );
+      console.log("[Browser] URL mobileApp param:", urlMobileApp);
+
+      setUrlParams({
+        data: urlData || undefined,
+        mobileApp: urlMobileApp || undefined,
+      });
+    }
+  }, [readFromUrl, data]);
+
+  // Use URL params if data is missing
+  const actualData = data || urlParams.data || "";
+  const actualMobileApp = urlParams.mobileApp;
+
   // Log to browser console immediately on mount
   useEffect(() => {
     console.log("=== WHATSAPP DEEPLINK HANDLER DEBUG ===");
@@ -22,31 +56,38 @@ export default function WhatsAppDeeplinkHandler({
     console.log("[Browser] Search params received:", searchParams);
     console.log(
       "[Browser] Data prop:",
-      data ? `${data.substring(0, 50)}...` : "null",
+      actualData ? `${actualData.substring(0, 50)}...` : "null",
       "length:",
-      data?.length
+      actualData?.length
     );
+    console.log("[Browser] MobileApp from URL:", actualMobileApp);
     console.log("[Browser] Immediate redirect:", immediateRedirect);
+    console.log("[Browser] Read from URL:", readFromUrl);
     console.log("=======================================");
-  }, []);
+  }, [actualData, actualMobileApp]);
 
   console.log("[WhatsAppDeeplinkHandler] Component mounted");
   console.log(
     "[WhatsAppDeeplinkHandler] Props - data:",
-    data ? `${data.substring(0, 50)}...` : "null",
+    actualData ? `${actualData.substring(0, 50)}...` : "null",
     "length:",
-    data?.length
+    actualData?.length
   );
   console.log(
     "[WhatsAppDeeplinkHandler] Props - immediateRedirect:",
     immediateRedirect
+  );
+  console.log("[WhatsAppDeeplinkHandler] Props - readFromUrl:", readFromUrl);
+  console.log(
+    "[WhatsAppDeeplinkHandler] Actual data being used:",
+    actualData ? `${actualData.substring(0, 50)}...` : "null"
   );
 
   const [isRedirecting, setIsRedirecting] = useState(true);
   const [showFallback, setShowFallback] = useState(false);
 
   const deepLink = `nearbyshops://whatsapp?data=${encodeURIComponent(
-    data
+    actualData
   )}&mobileApp=1`;
 
   console.log("[WhatsAppDeeplinkHandler] Deep link generated:", deepLink);
@@ -95,8 +136,8 @@ export default function WhatsAppDeeplinkHandler({
   useEffect(() => {
     console.log("[WhatsAppDeeplinkHandler] useEffect triggered");
     console.log(
-      "[WhatsAppDeeplinkHandler] useEffect - data:",
-      data ? `${data.substring(0, 50)}...` : "null"
+      "[WhatsAppDeeplinkHandler] useEffect - actualData:",
+      actualData ? `${actualData.substring(0, 50)}...` : "null"
     );
     console.log(
       "[WhatsAppDeeplinkHandler] useEffect - immediateRedirect:",
@@ -115,9 +156,27 @@ export default function WhatsAppDeeplinkHandler({
       window.location.href
     );
 
+    // Wait for URL params if we're reading from URL
+    if (readFromUrl && !actualData && !urlParams.data) {
+      console.log(
+        "[WhatsAppDeeplinkHandler] Waiting for URL params to be read..."
+      );
+      return;
+    }
+
+    // Validate we have data
+    if (!actualData) {
+      console.error(
+        "[WhatsAppDeeplinkHandler] ERROR: No data available, cannot create deep link"
+      );
+      setShowFallback(true);
+      setIsRedirecting(false);
+      return;
+    }
+
     // Compute deep link inside effect to ensure it's fresh
     const currentDeepLink = `nearbyshops://whatsapp?data=${encodeURIComponent(
-      data
+      actualData
     )}&mobileApp=1`;
 
     console.log(
@@ -256,7 +315,7 @@ export default function WhatsAppDeeplinkHandler({
       console.log("[WhatsAppDeeplinkHandler] Cleaning up timeout");
       clearTimeout(timeout);
     };
-  }, [data, immediateRedirect]);
+  }, [actualData, immediateRedirect, readFromUrl, urlParams.data]);
 
   // Listen for page visibility changes
   useEffect(() => {
