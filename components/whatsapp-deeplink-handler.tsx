@@ -6,12 +6,30 @@ import { Button } from "@/components/ui/button";
 interface WhatsAppDeeplinkHandlerProps {
   data: string;
   immediateRedirect?: boolean;
+  searchParams?: string; // JSON stringified searchParams for debugging
 }
 
 export default function WhatsAppDeeplinkHandler({
   data,
   immediateRedirect = false,
+  searchParams,
 }: WhatsAppDeeplinkHandlerProps) {
+  // Log to browser console immediately on mount
+  useEffect(() => {
+    console.log("=== WHATSAPP DEEPLINK HANDLER DEBUG ===");
+    console.log("[Browser] Component mounted at:", new Date().toISOString());
+    console.log("[Browser] Window location:", window.location.href);
+    console.log("[Browser] Search params received:", searchParams);
+    console.log(
+      "[Browser] Data prop:",
+      data ? `${data.substring(0, 50)}...` : "null",
+      "length:",
+      data?.length
+    );
+    console.log("[Browser] Immediate redirect:", immediateRedirect);
+    console.log("=======================================");
+  }, []);
+
   console.log("[WhatsAppDeeplinkHandler] Component mounted");
   console.log(
     "[WhatsAppDeeplinkHandler] Props - data:",

@@ -6,6 +6,10 @@ interface WhatsAppPageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
+// Force dynamic rendering to ensure runtime logs
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
   // DEBUG: Log all search params
   console.log("[WhatsAppPage] All searchParams:", JSON.stringify(searchParams, null, 2));
@@ -61,6 +65,7 @@ export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
             __html: `
               (function() {
                 console.log('[Script] Immediate mobile redirect script executing');
+                console.log('[Script] Timestamp:', new Date().toISOString());
                 try {
                   var deepLink = ${JSON.stringify(deepLink)};
                   console.log('[Script] Deep link:', deepLink);
@@ -112,12 +117,22 @@ export default function WhatsAppPage({ searchParams }: WhatsAppPageProps) {
             `,
           }}
         />
-        <WhatsAppDeeplinkHandler data={data} immediateRedirect={true} />
+        <WhatsAppDeeplinkHandler 
+          data={data} 
+          immediateRedirect={true}
+          searchParams={JSON.stringify(searchParams)}
+        />
       </>
     );
   }
 
   console.log("[WhatsAppPage] Not a mobile app request, using standard handler");
-  return <WhatsAppDeeplinkHandler data={data} immediateRedirect={false} />;
+  return (
+    <WhatsAppDeeplinkHandler 
+      data={data} 
+      immediateRedirect={false}
+      searchParams={JSON.stringify(searchParams)}
+    />
+  );
 }
 
