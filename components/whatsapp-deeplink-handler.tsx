@@ -22,15 +22,56 @@ export default function WhatsAppDeeplinkHandler({
   const attemptDeepLink = () => {
     setIsRedirecting(true);
     setShowFallback(false);
-    window.location.href = deepLink;
+
+    // Try iframe method first (works better in in-app browsers)
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = deepLink;
+    document.body.appendChild(iframe);
+
+    // Also try direct redirect
+    setTimeout(() => {
+      window.location.href = deepLink;
+    }, 100);
+
+    // Clean up iframe after a short delay
+    setTimeout(() => {
+      if (iframe.parentNode) {
+        iframe.parentNode.removeChild(iframe);
+      }
+    }, 2000);
   };
 
   useEffect(() => {
+    // Compute deep link inside effect to ensure it's fresh
+    const currentDeepLink = `nearbyshops://whatsapp?data=${encodeURIComponent(
+      data
+    )}&mobileApp=1`;
+
+    const tryDeepLink = () => {
+      // Try iframe method first (works better in in-app browsers)
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = currentDeepLink;
+      document.body.appendChild(iframe);
+
+      // Also try direct redirect
+      setTimeout(() => {
+        window.location.href = currentDeepLink;
+      }, 100);
+
+      // Clean up iframe after a short delay
+      setTimeout(() => {
+        if (iframe.parentNode) {
+          iframe.parentNode.removeChild(iframe);
+        }
+      }, 2000);
+    };
+
     // If immediateRedirect is true, attempt deep link immediately without delay
     if (immediateRedirect) {
-      // Use immediate synchronous redirect for mobile app links
-      window.location.href = deepLink;
-      
+      tryDeepLink();
+
       // For immediate redirects, use a shorter timeout
       const timeout = setTimeout(() => {
         if (!document.hidden) {
@@ -42,7 +83,7 @@ export default function WhatsAppDeeplinkHandler({
     }
 
     // Attempt to open the deep link
-    attemptDeepLink();
+    tryDeepLink();
 
     // Set a timeout to detect if the app opened
     // If the page is still visible after 2.5 seconds, the app likely didn't open
